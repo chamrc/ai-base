@@ -1,8 +1,12 @@
+#-----------------------------------
+# CUDA
+#-----------------------------------
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
-
 ENV CUDA_HOME /usr/local/cuda
 
+#-----------------------------------
 # Install basic dependencies
+#-----------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         cmake \
@@ -17,12 +21,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         tzdata \
         vim
 
+#-----------------------------------
+# Anaconda 3.6
+#-----------------------------------
 RUN wget --quiet https://repo.continuum.io/archive/Anaconda3-5.1.0-Linux-x86_64.sh -O ~/anaconda.sh && \
     /bin/bash ~/anaconda.sh -b -p /usr/local/anaconda3 && \
     rm ~/anaconda.sh && \
     echo "export PATH=/usr/local/anaconda3/bin:$PATH" >> ~/.bashrc
 
-RUN source ~/.bashrc
+#-----------------------------------
+# pip
+#-----------------------------------
+ENV PATH="/usr/local/anaconda3/bin:$PATH"
 RUN apt-get install -y sudo
 RUN pip install --upgrade pip
 RUN pip install tqdm h5py lmdb pandas
@@ -35,7 +45,7 @@ RUN pip install pynvrtc cupy
 
 
 #-----------------------------------
-# Pytorch
+# PyTorch
 #-----------------------------------
 RUN conda install pytorch torchvision cuda91 -c pytorch
 # RUN pip install http://download.pytorch.org/whl/cu90/torch-0.3.1-cp35-cp35m-linux_x86_64.whl
